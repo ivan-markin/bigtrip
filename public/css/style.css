@@ -749,7 +749,12 @@ main {
 
 .event__label {
   margin-right: 5px;
-  cursor: pointer; }
+  cursor: pointer; 
+}
+
+.event__label span {
+  text-transform: capitalize;
+}
 
 .event__input {
   -ms-flex-positive: 1;
