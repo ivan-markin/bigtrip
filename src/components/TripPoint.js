@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { dateConvert } from '../helpers/dateConvert';
+import { dateConvert } from '../utils/dateConvert';
 import AbstractComponent from './AbstractComponent';
 
 export const createTripPointLayout = (point) => {

@@ -16,7 +16,7 @@ import NoPoints from './components/NoPoints';
 import { generateTripPoints } from './mocks/tripPoint';
 import { generateFilters } from './mocks/filters';
 import { generateSort } from './mocks/sort';
-import { render } from './helpers/render';
+import { replace, render } from './utils/render';
 import { generateDayInfo } from './mocks/dayInfo';
 
 const tripMainContainer = document.querySelector('.trip-main');
@@ -32,11 +32,11 @@ const boardComponent = new Board();
 
 const renderPoint = (tripPointsContainer, point) => {
 	const replacePointToEdit = () => {
-		tripPointsContainer.replaceChild(editFormComponent.getElement(), pointComponent.getElement());
+		replace(tripPointsContainer, editFormComponent.getElement(), pointComponent.getElement());
 	}
 
 	const replaceEditToPoint = () => {
-		tripPointsContainer.replaceChild(pointComponent.getElement(), editFormComponent.getElement());
+		replace(tripPointsContainer, pointComponent.getElement(), editFormComponent.getElement());
 	}
 
 	const onEscKeyDown = (evt) => {
@@ -73,23 +73,23 @@ const renderPoint = (tripPointsContainer, point) => {
 		document.addEventListener('keydown', onEscKeyDown);
 	});
 
-	render(tripPointsContainer, pointComponent.getElement())
+	render(tripPointsContainer, pointComponent)
 }
 
 const renderBoard = (boardComponent, points, dayData) => {
 	if (!points.length) {
-		render(boardComponent.getElement(), new NoPoints().getElement());
+		render(boardComponent.getElement(), new NoPoints());
 	} else {
-		render(boardComponent.getElement(), new Sort(sort).getElement());
+		render(boardComponent.getElement(), new Sort(sort));
 
-		render(boardComponent.getElement(), new DaysContainer().getElement());
+		render(boardComponent.getElement(), new DaysContainer());
 		const daysList = boardComponent.getElement().querySelector('.trip-days');
 
-		render(daysList, new DayItemContainer().getElement());
+		render(daysList, new DayItemContainer());
 		const day = boardComponent.getElement().querySelector('.trip-days__item');
 
-		render(day, new DayInfo(dayData).getElement());
-		render(day, new TripPointsContainer().getElement());
+		render(day, new DayInfo(dayData));
+		render(day, new TripPointsContainer());
 
 		const tripPointsList = boardComponent.getElement().querySelector('.trip-events__list');
 
@@ -99,13 +99,13 @@ const renderBoard = (boardComponent, points, dayData) => {
 	}
 }
 
-render(tripMainContainer, new TripInfoContainer().getElement(), 'afterbegin');
+render(tripMainContainer, new TripInfoContainer(), 'afterbegin');
 
 const infoSectionContainer = tripMainContainer.querySelector('.trip-main__trip-info');
 
-render(infoSectionContainer, new TripInfo(points).getElement());
-render(infoSectionContainer, new TripCost(points).getElement());
-render(controlEventsContainer, new Menu().getElement(), 'afterbegin');
-render(controlEventsContainer, new Filters(filters).getElement());
-render(tripBoardContainer, boardComponent.getElement());
+render(infoSectionContainer, new TripInfo(points));
+render(infoSectionContainer, new TripCost(points));
+render(controlEventsContainer, new Menu(), 'afterbegin');
+render(controlEventsContainer, new Filters(filters));
+render(tripBoardContainer, boardComponent);
 renderBoard(boardComponent, points, day);
