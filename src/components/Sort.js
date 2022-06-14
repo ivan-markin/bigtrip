@@ -1,3 +1,5 @@
+import AbstractComponent from './AbstractComponent';
+
 const generateSortMarkup = (name, isChecked) => {
 	return `
 		<div class="trip-sort__item trip-sort__item--${name}">
@@ -9,7 +11,6 @@ const generateSortMarkup = (name, isChecked) => {
 				</svg>
 			</label>
 		</div>
-
 	`
 }
 
@@ -27,4 +28,15 @@ export const createSortLayout = (sort) => {
 			</form>
 		`
 	)
+}
+
+export default class Sort extends AbstractComponent {
+	constructor(sort) {
+		super();
+		this._sort = sort;
+	}
+
+	getTemplate() {
+		return createSortLayout(this._sort);
+	}
 }

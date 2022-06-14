@@ -1,7 +1,13 @@
+import AbstractComponent from './AbstractComponent';
+
 export const createTripCostLayout = (points) => {
-	const tripCost = points
-		.map(el => el.price)
-		.reduce((previousValue, currentValue) => previousValue + currentValue);
+	let tripCost = 0;
+
+	if (points.length) {
+		tripCost = points
+			.map(el => el.price)
+			.reduce((previousValue, currentValue) => previousValue + currentValue);
+	}
 
 	return (
 		`
@@ -10,4 +16,15 @@ export const createTripCostLayout = (points) => {
             </p>
 		`
 	)
+}
+
+export default class TripCost extends AbstractComponent {
+	constructor(points) {
+		super();
+		this._points = points;
+	}
+
+	getTemplate() {
+		return createTripCostLayout(this._points);
+	}
 }

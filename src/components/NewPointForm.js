@@ -1,4 +1,5 @@
 import moment from 'moment';
+import AbstractComponent from './AbstractComponent';
 
 const createEventTypeMarkup = (type) => {
 	return `
@@ -36,7 +37,7 @@ const createCitiesListLayout = (city) => {
 	`
 }
 
-export const createEditFormLayout = (point) => {
+export const createNewFormLayout = (point) => {
 	const { type, city, dateFrom, dateTo, description, eventTypes, citiesList, offers } = point;
 
 	const transferMarkup = eventTypes
@@ -168,4 +169,15 @@ export const createEditFormLayout = (point) => {
 			</form>
 		`
 	)
+}
+
+export default class NewPoint extends AbstractComponent {
+	constructor(point) {
+		super();
+		this._point = point;
+	}
+
+	getTemplate() {
+		return createNewFormLayout(this._point);
+	}
 }

@@ -1,3 +1,5 @@
+import AbstractComponent from './AbstractComponent';
+
 const createFilterMarkup = (name, isChecked) => {
 	return `
 		<div class="trip-filters__filter">
@@ -20,4 +22,15 @@ export const createFiltersLayout = (filters) => {
             </form>
 		`
 	)
+}
+
+export default class Filters extends AbstractComponent {
+	constructor(filters) {
+		super();
+		this._filters = filters;
+	}
+
+	getTemplate() {
+		return createFiltersLayout(this._filters);
+	}
 }

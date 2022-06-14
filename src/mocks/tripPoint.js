@@ -1,5 +1,6 @@
-const eventTypes = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const cities = ['Arkhangelsk', 'Vladivistok', 'Moscow', 'Lissabon', 'Barselona', 'Istanbul'];
+import { eventTypes } from '../constants/eventTypes';
+import { cities } from '../constants/cities';
+
 const defaultText = `
 	Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 	Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam
@@ -41,17 +42,6 @@ const offersList = [
 		price: 89
 	}
 ];
-
-// const generateOffer = () => {
-// 	const { name, id } = offersList[Math.floor(Math.random() * offersList.length)];
-
-// 	return {
-// 		type: eventTypes[Math.floor(Math.random() * eventTypes.length)],
-// 		id: id,
-// 		name: name,
-// 		price: Math.floor(Math.random() + 10)
-// 	}
-// }
 
 export const generateTripPoint = () => {
 	return {

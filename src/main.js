@@ -1,56 +1,111 @@
-import { createMenuLayout } from './components/Menu';
-import { createFiltersLayout } from './components/Filters';
-import { createSortLayout } from './components/Sort';
-import { createEditFormLayout } from './components/EditForm';
-import { createTripPointLayout } from './components/TripPoint';
-import { createTripInfoLayout } from './components/TripInfo';
-import { createTripCostLayout } from './components/TripCost';
-import { createTripInfoContainer } from './components/TripInfoContainer';
-import { createTripListContainer } from './components/TripListContainer';
-import { createDayItemContainer } from './components/DayItemContainer';
-import { createDayInfoLayout } from './components/DayInfoLayout';
-import { createTripPointsContainer } from './components/TripPointsContainer';
-import { generateTripPoint, generateTripPoints } from './mocks/tripPoint';
+import Menu from './components/Menu';
+import Filters from './components/Filters';
+import Sort from './components/Sort';
+import EditPoint from './components/EditPointForm';
+import NewPoint from './components/NewPointForm';
+import TripPoint from './components/TripPoint';
+import TripInfo from './components/TripInfo';
+import TripCost from './components/TripCost';
+import TripInfoContainer from './components/TripInfoContainer';
+import DaysContainer from './components/DaysContainer';
+import DayItemContainer from './components/DayItemContainer';
+import DayInfo from './components/DayInfo';
+import TripPointsContainer from './components/TripPointsContainer';
+import Board from './components/Board';
+import NoPoints from './components/NoPoints';
+import { generateTripPoints } from './mocks/tripPoint';
 import { generateFilters } from './mocks/filters';
 import { generateSort } from './mocks/sort';
+import { render } from './helpers/render';
+import { generateDayInfo } from './mocks/dayInfo';
 
 const tripMainContainer = document.querySelector('.trip-main');
+const tripBoardContainer = document.querySelector('.board-container');
 const controlEventsContainer = document.querySelector('.trip-main__trip-controls');
-const contentContainer = document.querySelector('.trip-events');
 
-const POINTS_COUNT = 12;
-const point = generateTripPoint();
+const POINTS_COUNT = 6;
+const day = generateDayInfo();
 const points = generateTripPoints(POINTS_COUNT);
 const filters = generateFilters();
 const sort = generateSort();
+const boardComponent = new Board();
 
-const render = (container, layout, place = 'beforeend') => {
-	container.insertAdjacentHTML(place, layout)
+const renderPoint = (tripPointsContainer, point) => {
+	const replacePointToEdit = () => {
+		tripPointsContainer.replaceChild(editFormComponent.getElement(), pointComponent.getElement());
+	}
+
+	const replaceEditToPoint = () => {
+		tripPointsContainer.replaceChild(pointComponent.getElement(), editFormComponent.getElement());
+	}
+
+	const onEscKeyDown = (evt) => {
+		const isEscKey = evt.key === 'Escape' || evt.key === 'Esc';
+
+		if (isEscKey) {
+			replaceEditToPoint();
+			document.removeEventListener('keydown', onEscKeyDown);
+		}
+	}
+
+	const editFormComponent = new EditPoint(point);
+	const editFormElement = editFormComponent.getElement().querySelector('.event--edit');
+	const resetBtnElement = editFormComponent.getElement().querySelector('.event__reset-btn');
+	const closeFormButton = editFormComponent.getElement().querySelector('.event__rollup-btn');
+	editFormElement.addEventListener('submit', (evt) => {
+		evt.preventDefault();
+		replaceEditToPoint();
+		document.removeEventListener('keydown', onEscKeyDown);
+	})
+	resetBtnElement.addEventListener('click', () => {
+		replaceEditToPoint();
+		document.removeEventListener('keydown', onEscKeyDown);
+	})
+	closeFormButton.addEventListener('click', () => {
+		replaceEditToPoint();
+		document.removeEventListener('keydown', onEscKeyDown);
+	});
+
+	const pointComponent = new TripPoint(point);
+	const editButton = pointComponent.getElement().querySelector('.event__rollup-btn');
+	editButton.addEventListener('click', () => {
+		replacePointToEdit();
+		document.addEventListener('keydown', onEscKeyDown);
+	});
+
+	render(tripPointsContainer, pointComponent.getElement())
 }
 
-render(tripMainContainer, createTripInfoContainer(), 'afterbegin');
+const renderBoard = (boardComponent, points, dayData) => {
+	if (!points.length) {
+		render(boardComponent.getElement(), new NoPoints().getElement());
+	} else {
+		render(boardComponent.getElement(), new Sort(sort).getElement());
+
+		render(boardComponent.getElement(), new DaysContainer().getElement());
+		const daysList = boardComponent.getElement().querySelector('.trip-days');
+
+		render(daysList, new DayItemContainer().getElement());
+		const day = boardComponent.getElement().querySelector('.trip-days__item');
+
+		render(day, new DayInfo(dayData).getElement());
+		render(day, new TripPointsContainer().getElement());
+
+		const tripPointsList = boardComponent.getElement().querySelector('.trip-events__list');
+
+		points.forEach(point => {
+			renderPoint(tripPointsList, point);
+		})
+	}
+}
+
+render(tripMainContainer, new TripInfoContainer().getElement(), 'afterbegin');
 
 const infoSectionContainer = tripMainContainer.querySelector('.trip-main__trip-info');
 
-render(infoSectionContainer, createTripInfoLayout(points));
-render(infoSectionContainer, createTripCostLayout(points));
-render(controlEventsContainer, createMenuLayout(), 'afterbegin');
-render(controlEventsContainer, createFiltersLayout(filters));
-render(contentContainer, createSortLayout(sort));
-render(contentContainer, createEditFormLayout(point));
-render(contentContainer, createTripListContainer());
-
-const tripListContainer = contentContainer.querySelector('.trip-days');
-
-render(tripListContainer, createDayItemContainer());
-
-const dayItemContainer = contentContainer.querySelector('.trip-days__item');
-
-render(dayItemContainer, createDayInfoLayout());
-render(dayItemContainer, createTripPointsContainer());
-
-const tripPointsContainer = contentContainer.querySelector('.trip-events__list');
-
-for (let i = 1; i <= POINTS_COUNT; i++) {
-	render(tripPointsContainer, createTripPointLayout(points[i]), 'beforeend');
-}
+render(infoSectionContainer, new TripInfo(points).getElement());
+render(infoSectionContainer, new TripCost(points).getElement());
+render(controlEventsContainer, new Menu().getElement(), 'afterbegin');
+render(controlEventsContainer, new Filters(filters).getElement());
+render(tripBoardContainer, boardComponent.getElement());
+renderBoard(boardComponent, points, day);

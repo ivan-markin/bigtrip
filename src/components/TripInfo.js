@@ -1,3 +1,5 @@
+import AbstractComponent from './AbstractComponent';
+
 export const createTripInfoLayout = (points) => {
 	const pointNames = points.map(point => point.city).join(' &mdash; ');
 
@@ -9,4 +11,15 @@ export const createTripInfoLayout = (points) => {
             </div>
 		`
 	)
+}
+
+export default class TripInfo extends AbstractComponent {
+	constructor(points) {
+		super();
+		this._points = points;
+	}
+
+	getTemplate() {
+		return createTripInfoLayout(this._points);
+	}
 }

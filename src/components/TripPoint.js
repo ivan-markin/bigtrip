@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { dateConvert } from '../helpers/dateConvert';
+import AbstractComponent from './AbstractComponent';
 
 export const createTripPointLayout = (point) => {
 	const { type, city, dateFrom, dateTo, description, eventTypes, citiesList, offers, price } = point;
@@ -88,4 +89,15 @@ export const createTripPointLayout = (point) => {
 			</li>
 		`
 	)
+}
+
+export default class TripPoint extends AbstractComponent {
+	constructor(point) {
+		super();
+		this._point = point;
+	}
+
+	getTemplate() {
+		return createTripPointLayout(this._point);
+	}
 }
