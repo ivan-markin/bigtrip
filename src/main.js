@@ -32,11 +32,11 @@ const boardComponent = new Board();
 
 const renderPoint = (tripPointsContainer, point) => {
 	const replacePointToEdit = () => {
-		replace(tripPointsContainer, editFormComponent.getElement(), pointComponent.getElement());
+		replace(editFormComponent, pointComponent);
 	}
 
 	const replaceEditToPoint = () => {
-		replace(tripPointsContainer, pointComponent.getElement(), editFormComponent.getElement());
+		replace(pointComponent, editFormComponent);
 	}
 
 	const onEscKeyDown = (evt) => {
