@@ -1,5 +1,5 @@
-import { eventTypes } from '../constants/eventTypes';
-import { cities } from '../constants/cities';
+import { eventTypes } from '../constants/constants';
+import { cities } from '../constants/constants';
 
 const defaultText = `
 	Lorem ipsum dolor sit amet, consectetur adipiscing elit.

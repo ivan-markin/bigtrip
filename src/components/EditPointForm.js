@@ -38,7 +38,7 @@ const createCitiesListLayout = (city) => {
 }
 
 const createEditFormLayout = (point) => {
-	const { type, city, dateFrom, dateTo, description, eventTypes, citiesList, offers } = point;
+	const { type, city, dateFrom, dateTo, description, eventTypes, citiesList, offers, price } = point;
 
 	const transferMarkup = eventTypes
 		.filter((el, i) => i < 7)
@@ -123,7 +123,7 @@ const createEditFormLayout = (point) => {
 						<span class="visually-hidden">Price</span>
 						&euro;
 						</label>
-						<input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+						<input class="event__input event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
 					</div>
 
 					<button class="event__save-btn  btn btn--blue" type="submit">Save</button>
@@ -192,5 +192,20 @@ export default class EditPoint extends AbstractComponent {
 
 	getTemplate() {
 		return createEditFormLayout(this._point);
+	}
+
+	setSubmitButtonClickHandler(handler) {
+		const editFormElement = this.getElement().querySelector('.event--edit');
+		editFormElement.addEventListener('submit', handler)
+	}
+
+	setResetButtonClickHandler(handler) {
+		const resetBtnElement = this.getElement().querySelector('.event__reset-btn');
+		resetBtnElement.addEventListener('click', handler)
+	}
+
+	setCloseButtonClickHandler(handler) {
+		const closeFormButton = this.getElement().querySelector('.event__rollup-btn');
+		closeFormButton.addEventListener('click', handler)
 	}
 }

@@ -1,42 +1,83 @@
 import AbstractComponent from './AbstractComponent';
 
-const generateSortMarkup = (name, isChecked) => {
-	return `
-		<div class="trip-sort__item trip-sort__item--${name}">
-			<input id="sort-${name}" class="trip-sort__input visually-hidden" type="radio" name="trip-sort" value="sort-${name}" ${isChecked ? 'checked' : ''}>
-			<label class="trip-sort__btn" for="sort-${name}">
-				${name}
-				<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
-					<path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
-				</svg>
-			</label>
-		</div>
-	`
+export const SortType = {
+	EVENT: 'event',
+	TIME: 'time',
+	PRICE: 'price'
 }
 
-export const createSortLayout = (sort) => {
-	const sortMarkup = sort.map((el, i) => generateSortMarkup(el, i === 0)).join('\n');
-
+export const createSortLayout = () => {
 	return (
 		`
 			<form class="trip-events__trip-sort trip-sort" action="#" method="get">
 				<span class="trip-sort__item  trip-sort__item--day">Day</span>
 
-				${sortMarkup}
+				<div class="trip-sort__item trip-sort__item--event">
+					<input id="sort-event" class="trip-sort__input visually-hidden" type="radio" name="trip-sort" value="sort-event" checked>
+					<label class="trip-sort__btn" for="sort-event" data-sort-type="${SortType.EVENT}">
+						Event
+						<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
+							<path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
+						</svg>
+					</label>
+				</div>
 
-				<span class="trip-sort__item  trip-sort__item--offers">Offers</span>
+				<div class="trip-sort__item trip-sort__item--time">
+					<input id="sort-time" class="trip-sort__input visually-hidden" type="radio" name="trip-sort" value="sort-time">
+					<label class="trip-sort__btn" for="sort-time" data-sort-type="${SortType.TIME}">
+						Time
+						<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
+							<path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
+						</svg>
+					</label>
+				</div>
+
+				<div class="trip-sort__item trip-sort__item--price">
+					<input id="sort-price" class="trip-sort__input visually-hidden" type="radio" name="trip-sort" value="sort-price">
+					<label class="trip-sort__btn" for="sort-price" data-sort-type="${SortType.PRICE}">
+						Price
+						<svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
+							<path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
+						</svg>
+					</label>
+				</div>
+
+				<span class="trip-sort__item trip-sort__item--offers">Offers</span>
 			</form>
 		`
 	)
 }
 
 export default class Sort extends AbstractComponent {
-	constructor(sort) {
+	constructor() {
 		super();
-		this._sort = sort;
+		this._currentSortType = SortType.EVENT;
 	}
 
 	getTemplate() {
-		return createSortLayout(this._sort);
+		return createSortLayout();
+	}
+
+	getSortType() {
+
+	}
+
+	setSortTypeChangeHandler(handler) {
+		this.getElement().addEventListener('click', (evt) => {
+
+			if (evt.target.tagName !== 'LABEL') {
+				return
+			}
+
+			const sortType = evt.target.dataset.sortType;
+
+			if (this._currentSortType === sortType) {
+				return
+			}
+
+			this._currentSortType = sortType;
+
+			handler(this._currentSortType);
+		})
 	}
 }
