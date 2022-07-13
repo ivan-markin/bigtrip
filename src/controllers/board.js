@@ -1,7 +1,4 @@
 import Sort, { SortType } from '../components/Sort';
-import EditPoint from '../components/EditPointForm';
-import NewPoint from '../components/NewPointForm';
-import TripPoint from '../components/TripPoint';
 import DaysContainer from '../components/DaysContainer';
 import DayItemContainer from '../components/DayItemContainer';
 import DayInfo from '../components/DayInfo';
@@ -9,6 +6,7 @@ import TripPointsContainer from '../components/TripPointsContainer';
 import NoPoints from '../components/NoPoints';
 import { replace, render } from '../utils/render';
 import { POINTS_COUNT } from '../constants/constants';
+import PointController from './point';
 
 const getSortedPoints = (points, sortType) => {
 	let sortedPoints = [];
@@ -29,53 +27,18 @@ const getSortedPoints = (points, sortType) => {
 	return sortedPoints;
 }
 
-const renderPoint = (tripPointsContainer, point) => {
-	const editFormComponent = new EditPoint(point);
-	const pointComponent = new TripPoint(point);
-
-	const replacePointToEdit = () => {
-		replace(editFormComponent, pointComponent);
-	}
-
-	const replaceEditToPoint = () => {
-		replace(pointComponent, editFormComponent);
-	}
-
-	const onEscKeyDown = (evt) => {
-		const isEscKey = evt.key === 'Escape' || evt.key === 'Esc';
-
-		if (isEscKey) {
-			replaceEditToPoint();
-			document.removeEventListener('keydown', onEscKeyDown);
-		}
-	}
-
-	editFormComponent.setSubmitButtonClickHandler((evt) => {
-		evt.preventDefault();
-		replaceEditToPoint();
-		document.removeEventListener('keydown', onEscKeyDown);
+const renderPoints = (pointsListElement, points, onDataChange) => {
+	return points.map(point => {
+		const pointController = new PointController(pointsListElement, onDataChange);
+		pointController.render(point);
+		return pointController;
 	})
-
-	editFormComponent.setResetButtonClickHandler(() => {
-		replaceEditToPoint();
-		document.removeEventListener('keydown', onEscKeyDown);
-	})
-
-	editFormComponent.setCloseButtonClickHandler(() => {
-		replaceEditToPoint();
-		document.removeEventListener('keydown', onEscKeyDown);
-	});
-
-	pointComponent.setEditButtonClickHandler(() => {
-		replacePointToEdit();
-		document.addEventListener('keydown', onEscKeyDown);
-	})
-
-	render(tripPointsContainer, pointComponent)
 }
 
 export default class BoardController {
 	constructor(container, dayData) {
+		this._points = [];
+		this._showedPointsControllers = [];
 		this._container = container;
 		this._noPointsComponent = new NoPoints();
 		this._sortComponent = new Sort();
@@ -83,14 +46,18 @@ export default class BoardController {
 		this._dayItemContainer = new DayItemContainer();
 		this._dayInfo = new DayInfo(dayData);
 		this._tripPointsContainer = new TripPointsContainer();
+		this._onSortTypeChange = this._onSortTypeChange.bind(this);
+		this._onDataChange = this._onDataChange.bind(this);
 	}
 
 	render(points) {
 		const container = this._container.getElement();
 
+		this._points = points;
+
 		if (!points.length) {
 			render(container, this._noPointsComponent);
-			return
+			return;
 		}
 
 		render(container, this._sortComponent);
@@ -107,8 +74,11 @@ export default class BoardController {
 		const tripPointsList = container.querySelector('.trip-events__list');
 		const showingPointsOnStart = points.slice().sort((a, b) => a.event - b.event);
 
-		showingPointsOnStart.forEach(point => {
-			renderPoint(tripPointsList, point);
+		const newPoints = renderPoints(tripPointsList, showingPointsOnStart, this._onDataChange);
+		this._showedPointsControllers = this._showedPointsControllers.concat(newPoints);
+
+		this._showedPointsControllers.forEach(point => {
+			new PointController().render(point);
 		})
 
 		this._sortComponent.setSortTypeChangeHandler((sortType) => {
@@ -117,8 +87,16 @@ export default class BoardController {
 			tripPointsList.innerHTML = '';
 
 			sortedPoints.forEach(point => {
-				renderPoint(tripPointsList, point);
+				new PointController().render(point);
 			})
 		})
+	}
+
+	_onSortTypeChange() {
+
+	}
+
+	_onDataChange() {
+
 	}
 }

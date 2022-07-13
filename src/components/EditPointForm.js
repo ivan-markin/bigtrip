@@ -208,4 +208,9 @@ export default class EditPoint extends AbstractComponent {
 		const closeFormButton = this.getElement().querySelector('.event__rollup-btn');
 		closeFormButton.addEventListener('click', handler)
 	}
+
+	setFavoritesButtonClickHandler(handler) {
+		const favoritesButton = this.getElement().querySelector('.event__favorite-btn');
+		favoritesButton.addEventListener('click', handler)
+	}
 }

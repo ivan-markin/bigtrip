@@ -29,19 +29,15 @@ const getSortedPoints = (points, sortType) => {
 	return sortedPoints;
 }
 
-const renderPoint = (tripPointsContainer, point) => {
-	const editFormComponent = new EditPoint(point);
-	const pointComponent = new TripPoint(point);
-
-	const replacePointToEdit = () => {
-		replace(editFormComponent, pointComponent);
+export default class PointController {
+	constructor(container, onDataChange) {
+		this._container = container;
+		this._pointComponent = null;
+		this._editPointComponent = null;
+		this._onEscKeyDown = this._onEscKeyDown.bind(this);
 	}
 
-	const replaceEditToPoint = () => {
-		replace(pointComponent, editFormComponent);
-	}
-
-	const onEscKeyDown = (evt) => {
+	_onEscKeyDown(evt) {
 		const isEscKey = evt.key === 'Escape' || evt.key === 'Esc';
 
 		if (isEscKey) {
@@ -50,80 +46,43 @@ const renderPoint = (tripPointsContainer, point) => {
 		}
 	}
 
-	editFormComponent.setSubmitButtonClickHandler((evt) => {
-		evt.preventDefault();
-		replaceEditToPoint();
-		document.removeEventListener('keydown', onEscKeyDown);
-	})
-
-	editFormComponent.setResetButtonClickHandler(() => {
-		replaceEditToPoint();
-		document.removeEventListener('keydown', onEscKeyDown);
-	})
-
-	editFormComponent.setCloseButtonClickHandler(() => {
-		replaceEditToPoint();
-		document.removeEventListener('keydown', onEscKeyDown);
-	});
-
-	pointComponent.setEditButtonClickHandler(() => {
-		replacePointToEdit();
-		document.addEventListener('keydown', onEscKeyDown);
-	})
-
-	render(tripPointsContainer, pointComponent)
-}
-
-export default class PointController {
-	constructor(container) {
-		this._container = container;
-		this._pointComponent = null;
-		this._editPointComponent = null;
-		this._onEscKeyDown = this._onEscKeyDown.bind(this);
-	}
-
 	render(point) {
 		this._editPointComponent = new EditPoint(point);
 		this._pointComponent = new TripPoint(point);
 
 		const replacePointToEdit = () => {
-			replace(editFormComponent, pointComponent);
+			replace(this._editPointComponent, this._pointComponent);
 		}
 
 		const replaceEditToPoint = () => {
-			replace(pointComponent, editFormComponent);
+			replace(this._pointComponent, this._editPointComponent);
 		}
 
-		const onEscKeyDown = (evt) => {
-			const isEscKey = evt.key === 'Escape' || evt.key === 'Esc';
-
-			if (isEscKey) {
-				replaceEditToPoint();
-				document.removeEventListener('keydown', onEscKeyDown);
-			}
-		}
-
-		editFormComponent.setSubmitButtonClickHandler((evt) => {
+		this._editPointComponent.setSubmitButtonClickHandler((evt) => {
 			evt.preventDefault();
 			replaceEditToPoint();
-			document.removeEventListener('keydown', onEscKeyDown);
+			document.removeEventListener('keydown', this._onEscKeyDown);
 		})
 
-		editFormComponent.setResetButtonClickHandler(() => {
+		this._editPointComponent.setResetButtonClickHandler(() => {
 			replaceEditToPoint();
-			document.removeEventListener('keydown', onEscKeyDown);
+			document.removeEventListener('keydown', this._onEscKeyDown);
 		})
 
-		editFormComponent.setCloseButtonClickHandler(() => {
+		this._editPointComponent.setCloseButtonClickHandler(() => {
 			replaceEditToPoint();
-			document.removeEventListener('keydown', onEscKeyDown);
+			document.removeEventListener('keydown', this._onEscKeyDown);
 		});
 
-		pointComponent.setEditButtonClickHandler(() => {
+		this._pointComponent.setEditButtonClickHandler(() => {
 			replacePointToEdit();
-			document.addEventListener('keydown', onEscKeyDown);
+			document.addEventListener('keydown', this._onEscKeyDown);
 		})
 
-		render(tripPointsContainer, pointComponent)
+		this._editPointComponent.setFavoritesButtonClickHandler(() => {
+
+		})
+
+		render(this._container, this._pointComponent)
 	}
 }
